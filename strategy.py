@@ -1,4 +1,4 @@
-def calculate_moving_average(data,short_window=10,long_window=50):
+def calculate_moving_averages(data,short_window=10,long_window=50):
     data['SMA_Short']=data['Close'].rolling(window=short_window).mean()
     data['SMA_Long']=data['Close'].rolling(window=long_window).mean()
     return data
