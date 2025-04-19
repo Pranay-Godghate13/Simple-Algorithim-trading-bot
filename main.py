@@ -1,8 +1,8 @@
-from fetch_data import fetch_stock_data
-from preprocess_data import preprocess_data
-from strategy import calculate_moving_averages, generate_signals
-from backtest import backtest_strategy
-from visualization import plot_results
+from app.fetch_data import fetch_stock_data
+from app.preprocess_data import preprocess_data
+from app.strategy import calculate_moving_averages, generate_signals
+from app.backtest import backtest_strategy
+from app.visualization import plot_results
 
 if __name__ == "__main__":
     
