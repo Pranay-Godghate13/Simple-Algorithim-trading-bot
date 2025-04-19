@@ -18,7 +18,7 @@ def index():
         capital = request.form["capital"]
 
         try:
-            # Fetch, preprocess, and calculate signals
+            
             data = fetch_stock_data(ticker, start_date, end_date)
             data = preprocess_data(data)
             data.set_index('Date', inplace=True)
@@ -30,18 +30,18 @@ def index():
             data_with_signals = generate_signals(data)
             data_with_signals.dropna(subset=['SMA_Short', 'SMA_Long'], inplace=True)
 
-            # Backtest the strategy
+            
             final_portfolio_value = backtest_strategy(data_with_signals, int(capital))
 
-            # Visualization
+            
             signal_plot_path = os.path.join(app.static_folder, "results", "signal_plot.png")
             os.makedirs(os.path.dirname(signal_plot_path), exist_ok=True)
             create_signal_plot(data_with_signals, signal_plot_path)
 
-            # Relative URL for the plot
+            
             plot_url = "/static/results/signal_plot.png"
 
-            # Render the template with data
+            
             return render_template(
                 "index.html",
                 data=data_with_signals.to_html(),
