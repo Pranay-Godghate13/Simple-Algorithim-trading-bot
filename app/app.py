@@ -3,11 +3,8 @@ from app.fetch_data import fetch_stock_data
 from app.preprocess_data import preprocess_data
 from app.strategy import calculate_moving_averages, generate_signals
 from app.backtest import backtest_strategy
+from app.visualization import create_signal_plot
 import os
-import matplotlib
-import matplotlib.pyplot as plt
-
-matplotlib.use('Agg')  
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -21,7 +18,7 @@ def index():
         capital = request.form["capital"]
 
         try:
-           
+            # Fetch, preprocess, and calculate signals
             data = fetch_stock_data(ticker, start_date, end_date)
             data = preprocess_data(data)
             data.set_index('Date', inplace=True)
@@ -29,40 +26,27 @@ def index():
             if data.empty:
                 raise ValueError("No data available for the given inputs.")
 
-         
             data = calculate_moving_averages(data)
             data_with_signals = generate_signals(data)
             data_with_signals.dropna(subset=['SMA_Short', 'SMA_Long'], inplace=True)
 
-            
+            # Backtest the strategy
             final_portfolio_value = backtest_strategy(data_with_signals, int(capital))
 
-            
-            signal_plot_path = "static/results/signal_plot.png"
-            os.makedirs("static/results", exist_ok=True)
+            # Visualization
+            signal_plot_path = os.path.join(app.static_folder, "results", "signal_plot.png")
+            os.makedirs(os.path.dirname(signal_plot_path), exist_ok=True)
+            create_signal_plot(data_with_signals, signal_plot_path)
 
-            plt.figure(figsize=(12, 6))
-            plt.plot(data_with_signals.index, data_with_signals['Close'], label='Close Price')
-            plt.plot(data_with_signals.index, data_with_signals['SMA_Short'], label='Short SMA')
-            plt.plot(data_with_signals.index, data_with_signals['SMA_Long'], label='Long SMA')
-            plt.scatter(data_with_signals.index[data_with_signals['Signal'] == 1],
-                        data_with_signals.loc[data_with_signals['Signal'] == 1, 'Close'],
-                        label='Buy Signal', marker='^', color='green')
-            plt.scatter(data_with_signals.index[data_with_signals['Signal'] == -1],
-                        data_with_signals.loc[data_with_signals['Signal'] == -1, 'Close'],
-                        label='Sell Signal', marker='v', color='red')
-            plt.title('Trading Strategy Signals')
-            plt.xlabel('Date')
-            plt.ylabel('Price')
-            plt.legend()
-            plt.grid()
-            plt.savefig(signal_plot_path)
+            # Relative URL for the plot
+            plot_url = "/static/results/signal_plot.png"
 
+            # Render the template with data
             return render_template(
                 "index.html",
                 data=data_with_signals.to_html(),
                 final_portfolio_value=final_portfolio_value,
-                plot_path=signal_plot_path,
+                plot_path=plot_url,
             )
 
         except ValueError as e:
