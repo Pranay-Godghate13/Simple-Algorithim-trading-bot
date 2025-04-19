@@ -7,7 +7,7 @@ import os
 import matplotlib
 import matplotlib.pyplot as plt
 
-matplotlib.use('Agg')  # Non-interactive backend
+matplotlib.use('Agg')  
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -21,7 +21,7 @@ def index():
         capital = request.form["capital"]
 
         try:
-            # Fetch and preprocess data
+           
             data = fetch_stock_data(ticker, start_date, end_date)
             data = preprocess_data(data)
             data.set_index('Date', inplace=True)
@@ -29,15 +29,15 @@ def index():
             if data.empty:
                 raise ValueError("No data available for the given inputs.")
 
-            # Apply strategy
+         
             data = calculate_moving_averages(data)
             data_with_signals = generate_signals(data)
             data_with_signals.dropna(subset=['SMA_Short', 'SMA_Long'], inplace=True)
 
-            # Backtest strategy
+            
             final_portfolio_value = backtest_strategy(data_with_signals, int(capital))
 
-            # Save the plot
+            
             signal_plot_path = "static/results/signal_plot.png"
             os.makedirs("static/results", exist_ok=True)
 
