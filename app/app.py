@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request
-from fetch_data import fetch_stock_data
-from preprocess_data import preprocess_data
-from strategy import calculate_moving_averages, generate_signals
-from backtest import backtest_strategy
+from app.fetch_data import fetch_stock_data
+from app.preprocess_data import preprocess_data
+from app.strategy import calculate_moving_averages, generate_signals
+from app.backtest import backtest_strategy
 import os
 import matplotlib
 import matplotlib.pyplot as plt
