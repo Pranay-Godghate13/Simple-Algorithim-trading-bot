@@ -6,16 +6,22 @@
     <title>Trading App</title>
 </head>
 <body>
+    <h1>SIMPLE TRADING BOT</h1>
     <form method="POST">
         <label for="ticker">Ticker:</label>
         <input type="text" name="ticker" id="ticker" required>
+        <br>
         <label for="start_date">Start Date:</label>
         <input type="date" name="start_date" id="start_date" required>
+        <br>
         <label for="end_date">End Date:</label>
         <input type="date" name="end_date" id="end_date" required>
+        <br>
         <label for="capital">Initial Capital:</label>
         <input type="number" name="capital" id="capital" required>
+        <br>
         <button type="submit">Submit</button>
+        <br>
     </form>
 
     {% if error %}
